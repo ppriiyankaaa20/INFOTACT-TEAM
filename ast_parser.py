@@ -49,7 +49,6 @@ def parse_file(filename):
 
     connection.commit()
     connection.close()
-
     print("Variables Saved Successfully")
 
 # Call the function
