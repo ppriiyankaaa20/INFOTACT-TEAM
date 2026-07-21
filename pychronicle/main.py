@@ -6,25 +6,23 @@ from config import BANNER, DATABASE_PATH, LINE, TARGET_FILE
 from database import DatabaseManager
 
 
-class PyChronicle:
-    """Week 1 foundation: static AST analysis and SQLite schema setup."""
+def section(title):
+    print(f"{LINE}\n{title}\n{LINE}")
 
+
+class PyChronicle:
     def __init__(self, target_file=TARGET_FILE):
         self.parser = ASTParser(target_file)
         self.database = DatabaseManager(DATABASE_PATH)
 
     def ast_phase(self):
-        print(LINE)
-        print("STEP 1 : AST ANALYSIS")
-        print(LINE)
+        section("STEP 1 : AST ANALYSIS")
         self.parser.load_file()
         self.parser.parse_ast()
         return self.parser.find_assignments()
 
     def storage_phase(self):
-        print(LINE)
-        print("STEP 2 : SQLITE STORAGE SCHEMA")
-        print(LINE)
+        section("STEP 2 : SQLITE STORAGE SCHEMA")
         print(f"Database ready: {DATABASE_PATH}")
         print("Columns: timestamp, line_number, variable_name, serialized_value")
 
@@ -38,20 +36,12 @@ class PyChronicle:
 
 
 def main():
-    argument_parser = argparse.ArgumentParser(
-        description="PyChronicle Week 1: find Python variable assignments with AST."
-    )
-    argument_parser.add_argument(
-        "target_file",
-        nargs="?",
-        default=TARGET_FILE,
-        help="Python file to analyse (default: sample.py).",
-    )
-    arguments = argument_parser.parse_args()
+    parser = argparse.ArgumentParser(description="PyChronicle Week 1: find Python variable assignments with AST.")
+    parser.add_argument("target_file", nargs="?", default=TARGET_FILE,
+                        help="Python file to analyse (default: sample.py).")
     app = None
-
     try:
-        app = PyChronicle(arguments.target_file)
+        app = PyChronicle(parser.parse_args().target_file)
         app.run()
     except KeyboardInterrupt:
         print("\nProgram interrupted.")
@@ -59,7 +49,7 @@ def main():
         print("\nApplication error\n")
         traceback.print_exc()
     finally:
-        if app is not None:
+        if app:
             app.close()
 
 

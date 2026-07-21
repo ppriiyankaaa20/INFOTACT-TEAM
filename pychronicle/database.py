@@ -4,8 +4,6 @@ from datetime import datetime
 
 
 class DatabaseManager:
-    """Manage the Week 1 variable-state storage schema."""
-
     def __init__(self, db_name="history.db"):
         self.connection = sqlite3.connect(db_name)
         self.cursor = self.connection.cursor()
@@ -26,22 +24,19 @@ class DatabaseManager:
         self.connection.commit()
 
     def save_variable_state(self, line_number, variable_name, value):
-        """Store one future execution-state change in the Week 1 schema."""
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.cursor.execute(
             """
             INSERT INTO execution_history
                 (timestamp, line_number, variable_name, serialized_value)
             VALUES (?, ?, ?, ?)
             """,
-            (timestamp, line_number, variable_name, json.dumps(value, default=str)),
+            (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), line_number,
+             variable_name, json.dumps(value, default=str)),
         )
         self.connection.commit()
 
     def get_all_history(self):
-        return self.cursor.execute(
-            "SELECT * FROM execution_history ORDER BY id"
-        ).fetchall()
+        return self.cursor.execute("SELECT * FROM execution_history ORDER BY id").fetchall()
 
     def clear_history(self):
         self.cursor.execute("DELETE FROM execution_history")
