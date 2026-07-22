@@ -6,10 +6,5 @@ A Python-based project for parsing Python source code and tracking variable assi
 ## Team Members
 - Priyanka
 - Devansha
-- ...
+- Jincy
 
-## How to Run
-
-```bash
-cd pychronicle
-py main.py
