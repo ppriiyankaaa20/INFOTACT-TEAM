@@ -5,6 +5,6 @@ A Python-based project for parsing Python source code and tracking variable assi
 
 ## Team Members
 - Priyanka
-- Devansha
+- Devansh
 - Jincy
 
