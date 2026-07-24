@@ -56,16 +56,26 @@ class ASTParser:
         print("AST Generated Successfully\n")
 
     def find_assignments(self):
-        print("Searching Variable Assignments...\n")
+        print("\nSearching Variable Assignments...\n")
+
         if self.tree is None:
-            raise RuntimeError("Parse the source file before searching for assignments.")
+           raise RuntimeError("Parse the source file before searching.")
 
         visitor = VariableVisitor()
         visitor.visit(self.tree)
+
+        print("-" * 50)
+        print(f"{'Line Number':<15}{'Variable Name':<22}{'Type'}")
+        print("-" * 50)
+
         for item in visitor.assignments:
-            print("-" * 50)
-            print(f"Variable Name : {item.name}")
-            print(f"Line Number   : {item.line_number}")
-            print(f"Type          : {item.assignment_type}")
-        print(f"\nAssignments Found: {len(visitor.assignments)}\n")
+          print(
+            f"{item.line_number:<15}"
+            f"{item.name:<22}"
+            f"{item.assignment_type}"
+        )
+
+        print("-" * 50)
+        print(f"Assignments Found : {len(visitor.assignments)}")
+
         return visitor.assignments

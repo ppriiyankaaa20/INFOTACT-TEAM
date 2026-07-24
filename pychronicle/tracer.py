@@ -65,6 +65,21 @@ class ExecutionTracer:
                 variable_name,
                 value
     )
+        for variable_name, value in variables.items():
+
+             record = {
+        "line": line_number,
+        "variable": variable_name,
+        "value": value,
+    }
+
+             self.execution_history.append(record)
+
+             self.database.save_variable_state(
+        line_number,
+        variable_name,
+        value,
+    )
         if DEBUG:
             self._print_event(event, line_number, function_name, variables)
         return self.trace
