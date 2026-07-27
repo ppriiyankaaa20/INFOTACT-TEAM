@@ -65,13 +65,13 @@ class ASTParser:
         visitor.visit(self.tree)
 
         print("-" * 50)
-        print(f"{'Line Number':<15}{'Variable Name':<22}{'Type'}")
+        print(f"{'Line Number':<15}{'Variable Name':<17}{'Type'}")
         print("-" * 50)
 
         for item in visitor.assignments:
           print(
             f"{item.line_number:<15}"
-            f"{item.name:<22}"
+            f"{item.name:<17}"
             f"{item.assignment_type}"
         )
 
