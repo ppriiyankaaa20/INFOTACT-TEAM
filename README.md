@@ -8,7 +8,8 @@ A Python-based project for parsing Python source code and tracking variable assi
 - Devansh
 - Jincy
 
-Out Put(ui.py)
+           OutPut(ui.py)
+
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
         CODE VIEW
