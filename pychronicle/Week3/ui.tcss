@@ -1,0 +1,17 @@
+Screen {
+    background: black;
+}
+
+Header {
+    background: blue;
+    color: white;
+}
+
+Footer {
+    background: darkgreen;
+    color: white;
+}
+
+Static {
+    color: cyan;
+}
