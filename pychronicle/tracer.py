@@ -40,8 +40,8 @@ class ExecutionTracer:
             or (event == "return" and not TRACE_RETURN)
             or (event == "exception" and not TRACE_EXCEPTION)
         )
-        if filename != "sample.py" or ignored_event:
-            return self.trace
+        if filename not in ("sample.py", "<string>") or ignored_event:
+             return self.trace
 
         self.frame_count += 1
         line_number = frame.f_lineno
@@ -59,7 +59,27 @@ class ExecutionTracer:
         if len(self.execution_history) < MAX_HISTORY:
             self.execution_history.append(record)
 
-        self.database.save_execution(filename, function_name, line_number, variables)
+        for variable_name, value in variables.items():
+            self.database.save_variable_state(
+                line_number,
+                variable_name,
+                value
+    )
+        for variable_name, value in variables.items():
+
+             record = {
+        "line": line_number,
+        "variable": variable_name,
+        "value": value,
+    }
+
+             self.execution_history.append(record)
+
+             self.database.save_variable_state(
+        line_number,
+        variable_name,
+        value,
+    )
         if DEBUG:
             self._print_event(event, line_number, function_name, variables)
         return self.trace

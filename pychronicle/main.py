@@ -1,6 +1,7 @@
 import argparse
 import traceback
 
+from tracer import ExecutionTracer
 from ast_parser import ASTParser
 from config import BANNER, DATABASE_PATH, LINE, TARGET_FILE
 from database import DatabaseManager
@@ -28,8 +29,20 @@ class PyChronicle:
 
     def run(self):
         print(BANNER)
+
         self.ast_phase()
         self.storage_phase()
+
+        tracer = ExecutionTracer()
+        tracer.start()
+
+        with open(self.parser.filename, "r") as f:
+            code = f.read()
+
+        exec(code, {})
+
+        tracer.stop()
+        tracer.summary()
 
     def close(self):
         self.database.close()

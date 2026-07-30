@@ -22,7 +22,6 @@ class DatabaseManager:
             """
         )
         self.connection.commit()
-
     def save_variable_state(self, line_number, variable_name, value):
         self.cursor.execute(
             """
