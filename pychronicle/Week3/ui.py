@@ -1,73 +1,137 @@
-from textual.app import App, ComposeResult
-from textual.widgets import Header, Footer, Static
+import json
 import sqlite3
 
-class PyChronicle(App):
-    CSS_PATH="ui.tcss"
-    TITLE="PyChronicle"
+from textual.app import App, ComposeResult
+from textual.containers import Horizontal
+from textual.widgets import Header, Footer, Static, Button
 
-    def get_execution(self):
+
+def deserialize_value(value):
+    if value is None:
+        return None
+
+    try:
+        return json.loads(value)
+    except (TypeError, json.JSONDecodeError):
+        return value
+
+
+class PyChronicle(App):
+
+    CSS_PATH = "ui.tcss"
+    TITLE = "PyChronicle"
+
+    def __init__(self):
+        super().__init__()
+
+        self.current = 0
+        self.records = []
+
+        self.code_lines = [
+            "x = 10",
+            "y = 20",
+            "z = x + y",
+            "z += 5",
+            "print(z)"
+        ]
+        
+    def load_execution(self):
+
         conn = sqlite3.connect("history.db")
         cursor = conn.cursor()
 
         cursor.execute("""
-        SELECT timestamp,
-               line_number,
+        SELECT line_number,
                variable_name,
                serialized_value
         FROM execution_history
-        LIMIT 15
+        ORDER BY id
         """)
-
-        rows = cursor.fetchall()
-
-        text = ""
-
-        for timestamp, line, variable, value in rows:
-            text += f"{timestamp} | Line {line} | {variable} = {value}\n"
-
-        return text
+        
+        self.records = cursor.fetchall()
+        
         conn.close()
 
-        output = "Execution Timeline\n\n"
-
-        if not rows:
-            output += "No execution data found."
-        else:
-            for line, var, value in rows:
-                output += f"Line {line} | {var} = {value}\n"
-
-        return output
-
     def compose(self) -> ComposeResult:
+
+        self.load_execution()
+
         yield Header(show_clock=True)
 
-        code = (
-            "Code View\n\n"
-            "x = 10\n"
-            "y = 20\n"
-            "z = x + y\n"
-            "print(z)"
+        yield Static("", id="code")
+
+        yield Horizontal(
+            Button("Previous", id="prev"),
+            Button("Next", id="next"),
+            Static("", id="step")
         )
 
-        yield Static(
-    "━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-    "        CODE VIEW\n"
-    "━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-    + code,
-    id="code"
-)
-
-        yield Static(
-    "━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-    "   EXECUTION TIMELINE\n"
-    "━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-    + self.get_execution(),
-    id="timeline"
-)
+        yield Static("", id="timeline")
 
         yield Footer()
 
+    def on_mount(self):
+
+        self.update_screen()
+
+    def update_screen(self):
+
+        code = ""
+
+        highlight = None
+
+        if self.records:
+           highlight = self.records[self.current][0]
+
+        for i, line in enumerate(self.code_lines, start=1):
+
+           if i == highlight:
+            code += f">>> {line}\n"
+           else:
+            code += f"    {line}\n"
+
+        self.query_one("#code", Static).update(
+        "CODE VIEW\n\n" + code
+    )
+
+        timeline = ""
+
+        if self.records:
+
+          line, variable, value = self.records[self.current]
+
+          timeline = (
+            f"Line     : {line}\n"
+            f"Variable : {variable}\n"
+            f"Value    : {deserialize_value(value)}"
+        )
+        # timeline =self.records[self.current]
+        # print(timeline)
+
+        self.query_one("#timeline", Static).update(
+        "EXECUTION TIMELINE\n\n" + timeline
+    )
+
+        self.query_one("#step", Static).update(
+        f"Step {self.current + 1}/{len(self.records)}"
+    )
+    def on_button_pressed(self, event: Button.Pressed):
+
+        if not self.records:
+            return
+
+        if event.button.id == "next":
+
+            if self.current < len(self.records)-1:
+                self.current += 1
+
+        elif event.button.id == "prev":
+
+            if self.current > 0:
+                self.current -= 1
+
+        self.update_screen()
+       
 
 if __name__ == "__main__":
     PyChronicle().run()

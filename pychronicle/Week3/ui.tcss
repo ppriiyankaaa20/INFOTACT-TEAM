@@ -1,17 +1,28 @@
 Screen {
-    background: black;
+    layout: vertical;
 }
 
-Header {
-    background: blue;
-    color: white;
+#code {
+    height: 12;
+    border: solid green;
+    padding: 1;
 }
 
-Footer {
-    background: darkgreen;
-    color: white;
+#timeline {
+    height: 10;
+    border: solid cyan;
+    padding: 1;
 }
 
-Static {
-    color: cyan;
+Horizontal {
+    height: 3;
+}
+
+Button {
+    width: 16;
+}
+
+#step {
+    width: 20;
+    content-align: center middle;
 }

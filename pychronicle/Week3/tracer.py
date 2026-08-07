@@ -22,13 +22,22 @@ class ExecutionTracer:
         self.start_time = None
         self.frame_count = 0
         self.enabled = False
-
-        # Delta Compression
+   # ==================================================
+        # WEEK 3 : DELTA COMPRESSION
+        # Stores previous variable values.
+        # Used to save only changed variables.
+        # ==================================================
+       
         self.previous_state = {}
 
     def start(self):
         self.execution_history.clear()
+    # ==========================================
+    # Reset previous variable values
+    # for a fresh execution.
+    # ==========================================
         self.previous_state.clear()
+        self.database.clear_history()
         self.frame_count = 0
         self.start_time = time.time()
         self.enabled = True
@@ -67,7 +76,13 @@ class ExecutionTracer:
             if key not in IGNORE_VARIABLES
         }
 
-        # Delta Compression
+        # ==================================================
+        # WEEK 3 : DELTA COMPRESSION
+        #
+        # Compare current variable value with previous value.
+        # Save to database ONLY if the value has changed.
+        # This reduces duplicate records and memory usage.
+        # ==================================================
         for variable_name, value in variables.items():
 
             if self.previous_state.get(variable_name) != value:
