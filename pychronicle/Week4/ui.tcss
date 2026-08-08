@@ -1,0 +1,37 @@
+Screen {
+    layout: vertical;
+}
+
+#code {
+    height: 12;
+    border: solid green;
+    padding: 1;
+}
+
+#timeline {
+    height: 10;
+    border: solid cyan;
+    padding: 1;
+}
+
+Horizontal {
+    height: 3;
+}
+
+Button {
+    width: 16;
+}
+
+#step {
+    width: 20;
+    content-align: center middle;
+}
+#watch_input {
+    width: 40;
+}
+
+#watch {
+    height: 8;
+    border: solid yellow;
+    padding: 1;
+}
